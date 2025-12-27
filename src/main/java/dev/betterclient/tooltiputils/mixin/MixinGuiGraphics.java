@@ -92,7 +92,7 @@ public class MixinGuiGraphics {
             return instance;
         }
 
-        if (instance.size() <= State.config.cutOffLines) {
+        if (instance.size() <= (State.config.cutOffLines + 1)) {
             return instance;
         }
 
