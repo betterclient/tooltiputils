@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "tooltiputils",
+  "version": "${version}",
+  "name": "Tooltip Utils",
+  "description": "Make tooltips better!",
+  "authors": [
+    "BetterClient"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/tooltiputils/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "modmenu": [
+      "dev.betterclient.tooltiputils.ModMenuApiImpl"
+    ]
+  },
+  "mixins": [
+    "tooltiputils.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "${minecraft_version}"
+  },
+  "custom": {
+    "modmenu": {
+      "update_checker": true
+    }
+  }
+}
