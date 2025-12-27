@@ -13,13 +13,18 @@ base {
 
 repositories {
     maven {
-        name = "Terraformers"
-        url = "https://maven.terraformersmc.com/"
+        name = 'Terraformers'
+        url = 'https://maven.terraformersmc.com/'
     }
 
     maven {
         name = 'ParchmentMC'
         url = 'https://maven.parchmentmc.org'
+    }
+
+    maven {
+        name 'Xander Maven'
+        url 'https://maven.isxander.dev/releases'
     }
 }
 
@@ -34,7 +39,7 @@ dependencies {
     modImplementation("com.terraformersmc:modmenu:15.0.0")
     //unused, only used for dev environment
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    include(implementation("com.google.code.gson:gson:2.13.2"))
+    modImplementation "dev.isxander:yet-another-config-lib:3.8.1+1.21.6-fabric"
 }
 
 processResources {

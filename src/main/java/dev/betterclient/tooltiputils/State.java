@@ -66,7 +66,7 @@ public class State {
         public float tooltipScale = 1f;
 
         public boolean scrollEnabled = true;
-        public float scrollMultiplier = 15f;
+        public int scrollMultiplier = 15;
 
         public boolean expandWithShift = false; //if false always expanded
         public int cutOffLines = 10;
