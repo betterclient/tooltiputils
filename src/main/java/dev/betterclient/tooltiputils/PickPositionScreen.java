@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
@@ -19,10 +20,11 @@ public class PickPositionScreen extends Screen {
         this.parent = parent;
     }
 
+
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        State.config.tooltipX = (int) mouseX;
-        State.config.tooltipY = (int) mouseY;
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+        State.config.tooltipX = (int) event.x();
+        State.config.tooltipY = (int) event.y();
         Minecraft.getInstance().setScreen(parent);
         State.saveConfig();
         return true;

@@ -86,7 +86,7 @@ public class MixinGuiGraphics {
         }
 
         if (InputConstants.isKeyDown(
-                Minecraft.getInstance().getWindow().getWindow(),
+                Minecraft.getInstance().getWindow(),
                 InputConstants.KEY_LSHIFT
         )) {
             return instance;
