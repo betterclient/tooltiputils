@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix3x2fStack;
 import org.spongepowered.asm.mixin.Final;
@@ -31,8 +31,8 @@ public class MixinGuiGraphics {
     @Shadow @Final private Matrix3x2fStack pose;
     @Unique private int rememberX = 0, rememberY = 0, rememberWidth = 0, rememberHeight = 0;
 
-    @Redirect(method = "renderTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/tooltip/TooltipRenderUtil;renderTooltipBackground(Lnet/minecraft/client/gui/GuiGraphics;IIIILnet/minecraft/resources/ResourceLocation;)V"))
-    public void onAfterPush(GuiGraphics guiGraphics, int x, int y, int width, int height, ResourceLocation sprite) {
+    @Redirect(method = "renderTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/tooltip/TooltipRenderUtil;renderTooltipBackground(Lnet/minecraft/client/gui/GuiGraphics;IIIILnet/minecraft/resources/Identifier;)V"))
+    public void onAfterPush(GuiGraphics guiGraphics, int x, int y, int width, int height, Identifier sprite) {
         //scale
         this.pose.translate(x, y);
         this.pose.scale(State.config.tooltipScale, State.config.tooltipScale);
@@ -54,7 +54,7 @@ public class MixinGuiGraphics {
 
     //modify renderer's counter list
     @Inject(method = "renderTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I", ordinal = 1), cancellable = true)
-    public void cancelNormalRendering(Font font, List<ClientTooltipComponent> components, int x, int y, ClientTooltipPositioner positioner, ResourceLocation background, CallbackInfo ci) {
+    public void cancelNormalRendering(Font font, List<ClientTooltipComponent> components, int x, int y, ClientTooltipPositioner positioner, Identifier background, CallbackInfo ci) {
         ci.cancel();
         int p = rememberY;
         components = modifyList(components);
