@@ -1,7 +1,7 @@
 package dev.betterclient.tooltiputils.mixin;
 
 import dev.betterclient.tooltiputils.State;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -23,17 +23,17 @@ public abstract class MixinAbstractContainerScreen extends Screen {
         throw new AssertionError("hi");
     }
 
-    @Inject(method = "renderTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/Slot;getItem()Lnet/minecraft/world/item/ItemStack;"))
-    public void onGetItem(GuiGraphics guiGraphics, int i, int j, CallbackInfo ci) {
+    @Inject(method = "extractTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/Slot;getItem()Lnet/minecraft/world/item/ItemStack;"))
+    public void onGetItem(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
         if (hoveredSlot != null && hoveredSlot.hasItem()) {
             State.notifyItem(hoveredSlot.getItem());
         }
     }
 
     @Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-    public void onScroll(double d, double e, double f, double g, CallbackInfoReturnable<Boolean> cir) {
+    public void onScroll(double x, double y, double scrollX, double scrollY, CallbackInfoReturnable<Boolean> cir) {
         if (this.hoveredSlot != null && this.hoveredSlot.hasItem()) {
-            State.doScroll(hoveredSlot.getItem(), g);
+            State.doScroll(hoveredSlot.getItem(), scrollY);
             cir.setReturnValue(true);
             cir.cancel();
         }

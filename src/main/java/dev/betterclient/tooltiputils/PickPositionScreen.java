@@ -1,7 +1,7 @@
 package dev.betterclient.tooltiputils;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
@@ -9,6 +9,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -31,11 +32,11 @@ public class PickPositionScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        super.render(guiGraphics, i, j, f);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int i, int j, float f) {
+        super.extractRenderState(graphics, i, j, f);
 
         //render example tooltip at mouse
-        guiGraphics.renderTooltip(
+        graphics.tooltip(
                 this.font,
                 List.of(
                         tooltipComponent("Lorem ipsum dolor sit amet, consectetur adipiscing elit."),

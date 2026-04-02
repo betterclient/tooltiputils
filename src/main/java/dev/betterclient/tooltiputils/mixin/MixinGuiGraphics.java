@@ -5,7 +5,7 @@ import dev.betterclient.tooltiputils.State;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
@@ -26,13 +26,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Mixin(GuiGraphics.class)
+@Mixin(GuiGraphicsExtractor.class)
 public class MixinGuiGraphics {
     @Shadow @Final private Matrix3x2fStack pose;
     @Unique private int rememberX = 0, rememberY = 0, rememberWidth = 0, rememberHeight = 0;
 
-    @Redirect(method = "renderTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/tooltip/TooltipRenderUtil;renderTooltipBackground(Lnet/minecraft/client/gui/GuiGraphics;IIIILnet/minecraft/resources/Identifier;)V"))
-    public void onAfterPush(GuiGraphics guiGraphics, int x, int y, int width, int height, Identifier sprite) {
+    @Redirect(method = "tooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/tooltip/TooltipRenderUtil;extractTooltipBackground(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIIILnet/minecraft/resources/Identifier;)V"))
+    public void onAfterPush(GuiGraphicsExtractor graphics, int x, int y, int w, int h, Identifier style) {
         //scale
         this.pose.translate(x, y);
         this.pose.scale(State.config.tooltipScale, State.config.tooltipScale);
@@ -41,28 +41,28 @@ public class MixinGuiGraphics {
 
         rememberY = y;
         rememberX = x;
-        rememberWidth = width;
-        rememberHeight = height;
-        TooltipRenderUtil.renderTooltipBackground(guiGraphics, x, y, width, height, sprite);
+        rememberWidth = w;
+        rememberHeight = h;
+        TooltipRenderUtil.extractTooltipBackground(graphics, x, y, w, h, style);
     }
 
     //modify height counter's list
-    @Redirect(method = "renderTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+    @Redirect(method = "tooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     public <E> Iterator<E> onGetIteratorForLines(List<E> instance) {
         return modifyList(instance).iterator();
     }
 
     //modify renderer's counter list
-    @Inject(method = "renderTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I", ordinal = 1), cancellable = true)
-    public void cancelNormalRendering(Font font, List<ClientTooltipComponent> components, int x, int y, ClientTooltipPositioner positioner, Identifier background, CallbackInfo ci) {
+    @Inject(method = "tooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I", ordinal = 1), cancellable = true)
+    public void cancelNormalRendering(Font font, List<ClientTooltipComponent> components, int xo, int yo, ClientTooltipPositioner positioner, Identifier background, CallbackInfo ci) {
         ci.cancel();
         int p = rememberY;
         components = modifyList(components);
 
-        GuiGraphics thiz = (GuiGraphics)(Object)this;
+        GuiGraphicsExtractor thiz = (GuiGraphicsExtractor) (Object)this;
         for(int q = 0; q < components.size(); ++q) {
             ClientTooltipComponent clientTooltipComponent2 = components.get(q);
-            clientTooltipComponent2.renderText(thiz, font, rememberX, p);
+            clientTooltipComponent2.extractText(thiz, font, rememberX, p);
             p += clientTooltipComponent2.getHeight(font) + (q == 0 ? 2 : 0);
         }
 
@@ -70,7 +70,7 @@ public class MixinGuiGraphics {
 
         for(int q = 0; q < components.size(); ++q) {
             ClientTooltipComponent clientTooltipComponent2 = components.get(q);
-            clientTooltipComponent2.renderImage(font, rememberX, p, rememberWidth, rememberHeight, thiz);
+            clientTooltipComponent2.extractImage(font, rememberX, p, rememberWidth, rememberHeight, thiz);
             p += clientTooltipComponent2.getHeight(font) + (q == 0 ? 2 : 0);
         }
 
@@ -108,7 +108,7 @@ public class MixinGuiGraphics {
         return es;
     }
 
-    @Inject(method = "renderTooltip", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "tooltip", at = @At("HEAD"), cancellable = true)
     public void onRenderStart(CallbackInfo callbackInfo) {
         if (!State.config.tooltipEnabled) callbackInfo.cancel();
 

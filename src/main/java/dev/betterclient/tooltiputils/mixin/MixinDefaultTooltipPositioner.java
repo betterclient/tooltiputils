@@ -14,15 +14,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DefaultTooltipPositioner.class)
 public class MixinDefaultTooltipPositioner {
     @Inject(method = "positionTooltip(IILorg/joml/Vector2i;II)V", at = @At(value = "FIELD", target = "Lorg/joml/Vector2i;y:I", remap = false, opcode = Opcodes.GETFIELD), cancellable = true)
-    public void onMax(int screenWidth, int screenHeight, Vector2i pos, int tooltipWidth, int tooltipHeight, CallbackInfo ci) {
+    public void onMax(int screenWidth, int screenHeight, Vector2i result, int tooltipWidth, int tooltipHeight, CallbackInfo ci) {
         int totalHeight = tooltipHeight + 3;
         if (State.config.lockedTooltipPosition && !(Minecraft.getInstance().screen instanceof PickPositionScreen)) {
-            pos.x = State.config.tooltipX;
-            pos.y = State.config.tooltipY;
+            result.x = State.config.tooltipX;
+            result.y = State.config.tooltipY;
         }
 
-        if (pos.y + totalHeight > screenHeight) {
-            pos.y = (int) (screenHeight - totalHeight - State.scrollAmount);
+        if (result.y + totalHeight > screenHeight) {
+            result.y = (int) (screenHeight - totalHeight - State.scrollAmount);
         }
 
         ci.cancel();
