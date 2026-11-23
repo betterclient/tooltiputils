@@ -26,7 +26,7 @@ public class PickPositionScreen extends Screen {
     public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
         State.config.tooltipX = (int) event.x();
         State.config.tooltipY = (int) event.y();
-        Minecraft.getInstance().setScreen(parent);
+        Minecraft.getInstance().gui.setScreen(parent);
         State.saveConfig();
         return true;
     }

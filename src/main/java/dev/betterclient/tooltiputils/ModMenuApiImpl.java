@@ -124,7 +124,7 @@ public class ModMenuApiImpl implements ModMenuApi {
             ButtonOption setLockPosition = ButtonOption
                     .createBuilder()
                     .name(Component.literal("Set Lock Position"))
-                    .action((yaclScreen, thisOption) -> Minecraft.getInstance().setScreen(new PickPositionScreen(yaclScreen)))
+                    .action((yaclScreen, thisOption) -> Minecraft.getInstance().gui.setScreen(new PickPositionScreen(yaclScreen)))
                     .text(Component.literal("Set Position"))
                     .build();
 
