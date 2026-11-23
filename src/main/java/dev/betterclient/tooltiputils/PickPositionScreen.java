@@ -61,7 +61,7 @@ public class PickPositionScreen extends Screen {
                 ),
                 i, j,
                 DefaultTooltipPositioner.INSTANCE,
-                null
+                null, false
         );
     }
 

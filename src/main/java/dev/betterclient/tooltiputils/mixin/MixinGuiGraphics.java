@@ -3,7 +3,6 @@ package dev.betterclient.tooltiputils.mixin;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.betterclient.tooltiputils.State;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -13,6 +12,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -54,22 +54,22 @@ public class MixinGuiGraphics {
 
     //modify renderer's counter list
     @Inject(method = "tooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I", ordinal = 1), cancellable = true)
-    public void cancelNormalRendering(Font font, List<ClientTooltipComponent> components, int xo, int yo, ClientTooltipPositioner positioner, Identifier background, CallbackInfo ci) {
+    public void cancelNormalRendering(Font font, List<ClientTooltipComponent> lines, int xo, int yo, ClientTooltipPositioner positioner, @Nullable Identifier style, boolean extraSpaceAfterFirstLine, CallbackInfo ci) {
         ci.cancel();
         int p = rememberY;
-        components = modifyList(components);
+        lines = modifyList(lines);
 
         GuiGraphicsExtractor thiz = (GuiGraphicsExtractor) (Object)this;
-        for(int q = 0; q < components.size(); ++q) {
-            ClientTooltipComponent clientTooltipComponent2 = components.get(q);
+        for(int q = 0; q < lines.size(); ++q) {
+            ClientTooltipComponent clientTooltipComponent2 = lines.get(q);
             clientTooltipComponent2.extractText(thiz, font, rememberX, p);
             p += clientTooltipComponent2.getHeight(font) + (q == 0 ? 2 : 0);
         }
 
         p = rememberY;
 
-        for(int q = 0; q < components.size(); ++q) {
-            ClientTooltipComponent clientTooltipComponent2 = components.get(q);
+        for(int q = 0; q < lines.size(); ++q) {
+            ClientTooltipComponent clientTooltipComponent2 = lines.get(q);
             clientTooltipComponent2.extractImage(font, rememberX, p, rememberWidth, rememberHeight, thiz);
             p += clientTooltipComponent2.getHeight(font) + (q == 0 ? 2 : 0);
         }
@@ -86,7 +86,6 @@ public class MixinGuiGraphics {
         }
 
         if (InputConstants.isKeyDown(
-                Minecraft.getInstance().getWindow(),
                 InputConstants.KEY_LSHIFT
         )) {
             return instance;
